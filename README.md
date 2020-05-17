@@ -14,14 +14,14 @@ Valid SSL Certificate to enable https (e.g. from letsencrypt using acme-client)
 
 ## Quick Install
 
-Clone this repo somwhere convenient and checkout a bare version to a temporary directory. 
+Clone this repo somewhere convenient and checkout a bare version to a temporary directory. 
 ```
 $ git clone git@github.com:dvere/phpblog.git
 
 $ cd phpblog && git checkout-index --prefix=~/blog/ -a  
 ```
 
-In the temporary directory create the database and run mtree to update ownershiop and permissions and remove setup files.  
+In the temporary directory create the database and run mtree to update ownership and permissions and remove setup files.  
 
 ```
 $ cd ~/blog && sqlite3 data/site.db < data/schema.sql 
