@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title><?=$title?></title>
+    <meta name="generator" content="phlogsum">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" type="text/css" href="/themes/<?=$theme?>/style.css">
+    <link rel="stylesheet" type="text/css" href="/themes/common/w3.css">
+    <link rel="stylesheet" type="text/css" href="/themes/common/w3-theme-blue.css">
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS 1.0">
+    <link rel="alternate" type="application/rss+xml" href="/rss2.xml" title="RSS 2.0">
+    <?php if(!empty($google_webmaster_id)): ?><meta name="verify-v1" content="<?=$google_webmaster_id?>"><?php endif; ?>
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+</head>
+<body style="margin:0px;border:0px">
+
+<!-- masthead -->
+<header class="w3-row w3-top w3-theme w3-card-4" style="height:60px">
+
+    <!-- top left column - only shown on large screens -->
+    <div class="w3-col l2 w3-hide-small w3-hide-medium">&nbsp;
+    </div>
+
+    <!-- top centre column  -->
+    <div class="w3-col w3-container l6 w3-theme w3-xxlarge">
+        <a href="/"><?=$title?></a>  <span class="w3-medium w3-hide-small"><?=$subtitle?></span>
+    </div>
+
+    <!-- top right column -->
+    <div class="w3-col l4 w3-hide-small w3-hide-medium">&nbsp;
+    </div>
+
+</header>
+
+<!-- main row -->
+<div class="w3-row mt60">
+
+    <!-- left column - only shown on large screens -->
+    <div class="w3-col l2 w3-hide-small w3-hide-medium">&nbsp;</div>
+
+    <!-- centre column  -->
+    <div id="ctrcol" class="w3-col m8 l6 w3-container">
+	<!-- view article or articles list container -->
+        <?php foreach($articles as $article): ?>
+	<!-- article loop -->
+	<header class="w3-margin-top w3-border-bottom">
+	    <h4 style="margin-bottom:0"><a class="w3-text-theme" href="/<?=$article['year']?>/<?=$article['month']?>/<?=$article['uri']?>"><?=$article['title']?></a></h4>
+                <span class="w3-tiny"><?=$article['date']?> by <a class="w3-text-theme" href="/Tags/<?=$article['author']?>"><?=$article['author']?></a></span>
+	</header>
+
+	<!-- artcle body -->
+	<article class="w3-section">
+	    <?=$article['body']?>
+	    <?php if(!empty( $article['readmore'])): ?>
+	    <br /><a class="w3-small w3-text-theme w3-padding" title="Read on..." href="/<?=$article['year']?>/<?=$article['month']?>/<?=$article['uri']?>">Read more...</a>
+	    <?php endif; ?>
+	</article>
+
+	<!-- comment count and tags -->
+	<div class="w3-container w3-small w3-padding-bottom w3-border-bottom">
+	    <span class="w3-text-theme"><a href="/<?=$article['year']?>/<?=$article['month']?>/<?=$article['uri']?>#comments">Comments: <?=$article['comments_count']?></a></span>
+	    <span class="w3-right">Tags: 
+	    <?php foreach($article['tag_loop'] as $tag): ?>
+		<a class="w3-text-theme" href="/Tags/<?=$tag?>"> <?=$tag?></a>
+	    <?php endforeach; ?>
+	    </span>
+	</div>
+	<!-- comments -->
+	<a name="comments"></a>
+	<?php if(!empty($article['comments'])): ?>
+	<div class="w3-col l9 m11" id="cmnts">
+	    <div class="mt60">&nbsp</div>
+	    <span class="w3-text-theme w3-large">Comments</span>
+	    <?php foreach($article['comments'] as $comment): ?>
+	    <header class="w3-border-bottom">
+		<span class="w3-small">
+		<?php if(!empty($comment['url'])): ?><a class="w3-text-theme w3-small" href="<?=$comment['url']?>"><?=$comment['name']?></a> 
+		<?php else: ?><?=$comment['name']?><?php endif; ?></span><span class="w3-right w3-tiny"><?=$comment['date']?></span>
+	    </header>
+	    <article class="w3-section w3-small w3-padding-bottom">
+		<span><?=$comment['comment']?></span>
+	    </article>
+	    <?php endforeach; ?>
+	</div>
+	<?php endif; ?>
+
+        <!-- error and notification messages -->
+	<div id="msgdiv" class="w3-col l9 m11">
+	    <?php if(!empty($error)): ?>
+	    <div class="w3-container w3-border w3-pale-red" style="margin-top:35px">
+		<h4>
+		    <span class="w3-text-red">&#10045;</span> <?=$error?>
+		</h4>
+	    </div>
+	    <?php endif; ?>
+	    <?php if(!empty($message)): ?>
+	    <div class="w3-container w3-border w3-theme-light" style="margin-top:35px">
+		<h4>
+		    <span class="w3-text-green">&#10045;</span> <?=$message?>
+		</h4>
+	    </div>
+	    <?php endif; ?>
+	</div>
+
+        <!-- comment form -->
+	<div class="w3-col l9 m11" id="comfrm">
+	    <?php if ($comment_form): ?>
+	    <h4>Add a comment</h4>
+	    <form class="w3-form w3-card w3-border w3-small" action="" method="post">
+		<label class="w3-label">Name</label>
+		<input class="w3-input w3-border" style="width:100%;max-width:300px;" type="text" name="name" maxlength="100" value="<?=$name?>"><br />
+		<label class="w3-label">Email</label>
+		<input class="w3-input w3-border" style="width:100%;max-width:300px;" type="text" name="email" maxlength="100" value="<?=$email?>"><br />
+		<label class="w3-label">url</label>
+		<input class="w3-input w3-border w3-validate" style="width:100%;max-width:300px;" type="url" name="url" maxlength="100" value="<?=$url?>"></br />
+		<label class="w3-label">Comment - max length <?=$conf['comment_max_length']?> chars</label>
+		<textarea rows="5" style="width:100%;max-width:447px;" name="comment"><?=$text?></textarea></br /></br />
+		<div class="g-recaptcha" data-size="compact" data-sitekey="<?=$conf['captcha_pubkey']?>"></div><br />
+		<input type="hidden" name="id" value="<?=$id?>">
+		<input type="submit" name="submit" value="submit comment">                            
+	    </form>
+	    <?php endif; ?>
+	</div>
+	<?php endforeach; ?>
+
+        <!-- main content pagination -->
+        <div class="w3-section">
+            <?php if(!empty($page_prev)): ?>
+            <div class="w3-text-theme w3-left">
+                <a title="Newer Articles" href="/Page/<?=$page_prev?>">Newer Articles</a>
+            </div>
+            <?php endif; ?>
+            <?php if(!empty($page_next)): ?>
+            <div class="w3-text-theme w3-right">
+                <a title="Older Articles" href="/Page/<?=$page_next?>">Older Articles</i></a>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- right column -->
+    <div class="w3-col m4 l3">
+        <a name="archives"></a>
+        <div class="w3-hide-medium w3-hide-large" style="height:60px">&nbsp;</div>
+        <div class="w3-container">
+            <div class="w3-border-bottom">
+                <h4 style="margin-bottom:2px">Archive</h4>
+            </div>
+            <?php foreach($archives as $y): ?>
+            <div class="w3-section w3-small">
+                <a class="w3-text-theme" href="/<?=$y['year']?>/"><?=$y['year']?></a> (<?=$y['count']?>)
+                <?php if(isset($y['month_loop'])):
+                    foreach($y['month_loop'] as $m): ?>
+                <div class="w3-container">
+                    <a class="w3-text-theme" href="/<?=$y['year']?>/<?=$m['month']?>/"><?=$m['month_name']?></a> <?=$m['count']?> 
+                    <?php if (isset($m['uri_loop'])): ?>
+                    <div class="w3-container">
+                        <?php foreach ($m['uri_loop'] as $uri): ?>
+                        <a class="w3-text-theme" title="<?=$uri['full_title']?>" href="/<?=$y['year']?>/<?=$m['month']?>/<?=$uri['uri']?>"><?=$uri['title']?></a><br />
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach;
+                endif; ?>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <a name="tagcloud" />
+        <div class="w3-hide-medium w3-hide-large" style="height:60px">&nbsp;</div>
+        <div class="w3-container">
+            <div class="w3-border-bottom">
+                <h4 style="margin-bottom:2px">Tag Cloud</h4>
+            </div>
+            <div class="w3-section w3-small" id="tagcloud">
+                <?php foreach($tagcloud as $tag=>$scale): ?>
+                <span class="tagcloud_<?=$scale?>"><a class="w3-text-theme" href="/Tags/<?=$tag?>"><?=$tag?></a> </span>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <div class="w3-container">
+            <div class="w3-border-bottom">
+                <h4 style="margin-bottom:2px">Feeds</h4>
+            </div>
+            <div class="w3-section w3-small">
+                <p>
+                    <a class="w3-text-theme" href="/rss.xml"><img style="padding-right:7px;padding-bottom:2px;" src="/themes/<?=$theme?>/images/xml.gif" alt="RSS 1.0"><span style="vertical-align:middle">RSS 1.0</span></a>
+                </p>
+                <p>
+                <a class="w3-text-theme" href="/rss2.xml"><img style="padding-right:7px;padding-bottom:2px;" src="/themes/<?=$theme?>/images/xml.gif" alt="RSS 2.0"><span style="vertical-align:middle">RSS 2.0</span></a>
+                </p>
+            </div>
+        </div>    
+    </div>
+</div>
+ 
+<!-- footer -->
+<div class="w3-row">
+    <!-- left column - only shown on large screens -->
+    <div class="w3-col l2 w3-hide-small w3-hide-medium">&nbsp;</div>
+    <!-- centre column  -->
+    <div class="w3-col m8 l6 w3-container">
+        <div class="w3-container w3-tiny w3-center w3-opacity">
+            &copy; <?=$copyright?>
+
+        </div>
+    </div>
+    <!-- right column - hidden from small -->
+    <div class="w3-col m4 l4 w3-hide-small">&nbsp;</div>
+</div>
+<?php if($conf['debug'] == 1): ?>
+<div class="w3-code">
+    <pre>
+<?php print_r($dump); ?>
+    </pre>
+</div>
+<?php endif; ?>
+
+<!-- w3 scripts --> 
+<script>
+function w3_open() {
+    var x = document.getElementsByClassName("w3-sidenav")[0];
+    x.style.display = "block";
+}
+function w3_close() {
+    var x = document.getElementsByClassName("w3-sidenav")[0];
+    x.style.display = "none";
+}
+</script>
+<!-- w3 scripts ends -->
+
+<?php if( !empty($google_analytics_id )): ?> 
+<!-- analytics support -->
+<script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+        try {
+        var pageTracker = _gat._getTracker("<?=$google_analytics_id?>");
+        pageTracker._trackPageview();
+        } catch(err) {}
+</script>
+<!-- analytics support ends -->
+<?php endif; ?>
+
+</body>
+</html>
+
+

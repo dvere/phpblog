@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title><?=$conf['blog_title']?></title>
+    <link rel="stylesheet" type="text/css" href="/themes/<?=$conf['blog_theme']?>/style.css" title="Default">
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="header">
+        <h1>
+            <a id="admin" href="/"><?=$conf['blog_title']?></a>
+            <a id="view" href="/admin.php?view=<?=$view?>"><?=$view?>.</a>
+        </h1>
+        <h3>
+            <a href="?view=edit">create</a> / <a <?php if ($comments_to_moderate): ?>style="color: #f00;"<?php endif; ?> href="?view=moderate">moderate</a> / <a href="?view=administrate">administrate</a>
+        </h3>
+    </div>
+
+    <?php if (!empty($error)): ?>
+    <h3 id="error">
+        <img src="/themes/<?=theme?>/images/asterisk-red.gif" style="height: 20px; padding-right: 5px;"> <?=$error?>
+    </h3>
+    <?php endif; ?>
+
+    <?php if (isset($preview)): ?>
+    <!-- preview articles -->
+    <div id="preview">
+        <h2><?=$title?></h2>
+        <h3><?=$date?></h3>
+        <div><?=$preview?></div>
+    </div>
+    <?php endif; ?>
+
+    <?php if (isset($edit)): ?>
+    <!-- create or edit articles -->
+    <form id="edit" action="/admin.php" method="post">
+        <p><input size="80" name="title" value="<?=$title?>"> &nbsp; title</p>
+        <p><input size="80" name="uri" value="<?=$uri?>"> &nbsp; uri</p>
+        <p><input size="80" name="tags" value="<?=$tags?>"> &nbsp; tags (e.g. <em>foo,bar,baz</em>)</p>
+        <p><textarea rows="15" cols="80" name="body"><?=$body?></textarea></p>
+        <p><input type="submit" name="preview" value="preview"> &nbsp;&nbsp; <input type="submit" name="save" value="save"></p>
+        <input type="hidden" name="view" value="edit">
+        <?php if (isset($id)): ?>
+            <input type="hidden" name="id" value="<?=$id?>">
+        <?php endif; ?>
+    </form>
+    <?php endif; ?>
+
+    <?php if (!empty($articles)): ?>
+    <!-- manage articles -->
+    <?php foreach ($articles as $a): ?>
+        <p>
+        <?php if (!$a['enabled']): ?>
+            <a title="Publish" href="/admin.php?view=administrate&publish=<?=$a['id']?>"><img src="/themes/<?=$conf['blog_theme']?>/images/play.gif" alt="Publish"></a>
+        <?php else: ?>
+            <img src="/themes/<?=$conf['blog_theme']?>/images/play-disabled.gif" alt="Publish">
+        <?php endif; ?>
+            <a title="Edit" href="/admin.php?view=edit&id=<?=$a['id']?>"><img src="/themes/<?=$conf['blog_theme']?>/images/plus.gif" alt="Edit"></a>
+        <?php if ($a['enabled']): ?>
+            <a title="Draft" href="/admin.php?view=administrate&draft=<?=$a['id']?>"><img src="/themes/<?=$conf['blog_theme']?>/images/draft.gif" alt="Draft"></a>
+        <?php else: ?>
+            <img src="/themes/<?=$conf['blog_theme']?>/images/draft-disabled.gif" alt="Draft">
+        <?php endif; ?>
+            <a title="Delete" href="/admin.php?view=administrate&delete=<?=$a['id']?>"><img src="/themes/<?=$conf['blog_theme']?>/images/delete.gif" alt="Delete"></a> &nbsp;&nbsp;&nbsp;
+        <?php if ($a['enabled']): ?>
+            <a id="mod_story" href="/<?=$a['year']?>/<?=$a['month']?>/<?=$a['uri']?>" target="_new">
+        <?php else: ?>
+            <span id="mod_story_disabled">
+        <?php endif; ?>
+            <?=$a['title']?>
+        <?php if ($a['enabled']): ?>
+            </a>
+        <?php else: ?>
+            </span>
+        <?php endif; ?>
+            &nbsp; submitted by <span id="mod_user"><?=$a['author']?></span>
+            on <span id="mod_date"><?=$a['date']?></span>
+        </p>
+    <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if (isset($comments)): ?>
+    <!-- manage comments -->
+    <?php foreach ($comments as $c): ?>
+        <hr style="height: 1px; width: 100%; color: #999; background-color: #999; border: 0;"></hr>
+        <p>
+            <a id="publish" href="/admin.php?view=moderate&publish=<?=$c['id']?>"><img src="/themes/<?=$conf['blog_theme']?>/images/check.gif" alt="Publish?></a>
+            <a id="delete" href="/admin.php?view=moderate&delete=<?=$c['id']?>"><img src="/themes/<?=$conf['blog_theme']?>/images/delete.gif" alt="Delete?></a>
+            &nbsp; comment in article &nbsp;
+            <a id="mod_story" href="/<?=$c['article_year']?>/<?=$c['article_month']?>/<?=$c['article_uri']?>" target="_new"><?=$c['article_title']?></a>
+            <br>
+            submitted by <span id="mod_user"><?=$c['name']?></span>
+            at <?=$c['date']?>
+        </p>
+        <p>
+             &quot;<?=$c['comment']?>&quot;
+        </p>
+    <?php endforeach; ?>
+    <?php endif; ?>
+</div>
+
+<?php if ($conf['debug'] == 1): ?>
+<pre id="dump">
+<?php var_dump($dump); ?>
+</pre>
+<?php ENdif; ?>
+</body>
+</html>

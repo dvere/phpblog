@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss version="2.0"
+ xmlns:blogChannel="http://backend.userland.com/blogChannelModule"
+>
+
+<channel>
+<?php
+foreach( $channel as $element => $value ):
+    if( !is_array( $value )):
+        echo "<$element>$value</$element>\n";
+    endif;
+endforeach;
+echo "\n";
+foreach( $channel['items'] as $item ):
+    echo "<item>\n";
+    foreach( $item as $property => $value ):
+	if( !is_array( $value )) :
+	    echo " <$property>$value</$property>\n";
+	endif;
+    endforeach;
+    foreach( $item['category'] as $value ):
+	echo " <category>$value</category>\n";
+    endforeach;
+echo "</item>\n";
+endforeach;
+echo "</channel>\n</rss>\n";
+?>

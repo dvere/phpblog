@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rdf:RDF
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns="http://purl.org/rss/1.0/"
+xmlns:admin="http://webns.net/mvcb/"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:syn="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/"
+>
+
+<channel rdf:about="<?=$conf['blog_url']?>">
+<?php
+foreach( $channel as $element => $value ):
+    if( !is_array( $value ) && $value != 'items' ):
+        echo "<$element>$value</$element>\n";
+    endif;
+endforeach;
+foreach( $channel['dc'] as $dc_element => $value ):
+    echo "<dc:$dc_element>$value</$dc_element>\n";
+endforeach;
+foreach( $channel['syn'] as $syn => $value ):
+    echo "<syn:$syn>$value</syn:$syn>\n";
+endforeach;
+echo "<items>\n <rdf:Seq>\n";  
+foreach( $channel['items'] as $item ):
+    echo '   <rdf:li rdf:resource="' . $item['link'] . '" />' . "\n";
+endforeach;
+echo " </rdf:Seq>\n</items>\n</channel>\n";
+foreach( $channel['items'] as $item ):
+    echo '<item rdf:about="' . $item['link'] . ">\n";
+    foreach( $item as $property => $value ):
+	if( !is_array( $value )) :
+	    echo " <$property>$value</$property>\n";
+	endif;
+    endforeach;
+    foreach( $item['dc'] as $dc_property => $value ):
+	echo " <dc:$dc_property>$value</dc:$dc_property>\n";
+    endforeach;
+echo "</item>\n";
+endforeach;
+echo "</rdf:RDF>\n";
+?>

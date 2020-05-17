@@ -1,0 +1,102 @@
+# phpblog perms.mtree
+# .
+/set type=file uname=root gname=daemon mode=0755
+.               type=dir
+    admin.php   mode=0644
+    index.php   mode=0644
+
+# ./conf
+/set type=file uname=root gname=daemon mode=0644
+conf            type=dir mode=0755
+    config.php 
+# ./conf
+..
+
+
+# ./data
+data            type=dir uname=www mode=0751
+    site.db     uname=www
+# ./data
+..
+
+
+# ./src
+src             type=dir mode=0755
+    admin_functions.php
+    functions.php
+    mailer.php 
+# ./src
+..
+
+
+# ./themes
+/set type=file uname=root gname=daemon mode=0755
+themes          type=dir
+
+# ./themes/basic
+/set type=file uname=root gname=daemon mode=0644
+basic           type=dir mode=0755
+    admin.phtml
+    index.phtml
+    style.css  
+
+# ./themes/basic/images
+/set type=file uname=root gname=daemon mode=0444
+images          type=dir mode=0755
+    asterisk-green.gif
+    asterisk-red.gif
+    check.gif  
+    delete.gif 
+    draft-disabled.gif
+    draft.gif  
+    play-disabled.gif
+    play.gif   
+    plus.gif   
+    xml.gif    
+# ./themes/basic/images
+..
+
+# ./themes/basic
+..
+
+
+# ./themes/common
+/set type=file uname=root gname=daemon mode=0644
+common          type=dir mode=0755
+    rss-1.0.xmlt
+    rss-2.0.xmlt
+    w3-theme-blue.css
+    w3-theme-red.css
+    w3.css     
+# ./themes/common
+..
+
+
+# ./themes/default
+default         type=dir mode=0755
+    admin.phtml
+    index.phtml
+    style.css  
+
+# ./themes/default/images
+/set type=file uname=root gname=daemon mode=0444
+images          type=dir mode=0755
+    xml.gif    
+# ./themes/default/images
+..
+
+# ./themes/default
+..
+
+# ./themes
+..
+
+
+# ./user_content
+/set type=file uname=www gname=daemon mode=0644
+user_content    type=dir mode=0755
+# ./user_content
+..
+
+..
+

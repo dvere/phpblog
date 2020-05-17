@@ -1,0 +1,87 @@
+/* global styles */
+body { font-family: Georgia, Palatino, Palatino Linotype, Times, Times New Roman, serif; text-align: left; }
+div, h1, h2, h3, h4, h5 { padding: 0; margin: 0; }
+h1 { font-size: 1.8em; }
+h2 { font-size: 1.3em; }
+h3 { font-size: 0.9em; }
+img { border: 0; }
+p { font-size: 0.8em; }
+pre { font-size: 0.7em; background-color: #ccc; padding: 15px 25px; }
+pre, tt { font-family: Courier; }
+
+/* page header */
+#header { padding: .5em 0 1.5em 0; }
+#header a { text-decoration: none; color: #aaa; }
+#header h1 span { font-size: 0.5em; color: #ccc; }
+#header h3 a:hover { color: #777; }
+
+/* page content wrapper */
+#wrapper { margin-left: 15%; margin-right: 10%; }
+
+/* article wrapper */
+#main { width: 65%; float: left; position: relative; }
+
+/* admin functions */
+#header #view { text-decoration: none; color: #777; }
+#mod_story, #mod_story_disabled { font-size: 1.3em; font-weight: bold; }
+#mod_user, #mod_date { font-size: 1.1em; font-weight: bold; }
+#mod_story_disabled { color: #999; }
+#preview { padding: 3% 5%; margin: 0 30% 10% 0; background-color: #fff; border: 1px dotted black; }
+#preview h2 { color: #a14732; }
+#preview div a { color: #a14732; text-decoration: none; border-bottom: 1px dashed; }
+#preview ul { padding: 0; list-style: none; }
+
+/* article display */
+.article { width: 100%; padding: 4% 0; }
+.article h2 { border-bottom: 1px solid #ccc; }
+.article h2 a { text-decoration: none; }
+.article h2 a, a#mod_story { color: #a14732; }
+.article h3 { margin: 18px 0 10px 0; }
+.article h3 span { font-size: 0.9em; color: #999; }
+.article h3 span a { text-decoration: none; font-weight: normal; color: #09c; border-bottom: 1px dashed; }
+.article div a { color: #a14732; text-decoration: none; border-bottom: 1px dashed; }
+.article ul { padding: 0; list-style: none; }
+.article ul li.comments_count { width: 20%; float: left; }
+.article ul li.tags { width: 80%; float: right; text-align: right; }
+.article ul li span, .tags span { font-size: 0.7em; }
+.article ul li a, .tags span a { color: #09c; }
+.article .comments h4 { padding-top: 30px; }
+.article .comments h5 { font-size: 0.8em; font-weight: normal; }
+.article .comments h5 span { font-size: 1.0em; font-weight: bold; }
+.article .comments p { padding: 0 0 18px 10px; }
+.article .tags span a { text-decoration: none; border-bottom: 1px dashed; }
+
+/* sidebar archive/rss styles */
+#sidebar { float: left; clear: none; position: relative; width: 30%; padding: 2% 0 0 5%; font-size: 0.8em; }
+#sidebar h3 { font-size: 1.4em; color: #777; padding: 4px 0 17px 0; }
+#sidebar h3 { padding-bottom: 5px; margin-bottom: 10px; border-bottom: 1px solid #ccc; }
+#sidebar ul { list-style: none; padding: 0; margin: 0; }
+#sidebar li span { color: #777; padding-left: 5px; }
+#sidebar a { color: #c66; text-decoration: none; font-weight: bold; }
+#sidebar ul li ul { padding-left: 20px; }
+#sidebar #tagcloud h3, #feeds h3 { padding-top: 30px; }
+#sidebar #feeds img { padding-right: 7px; }
+
+/* tag cloud */
+#tagcloud li { display: inline; }
+#tagcloud .tagcloud_0 a { font-size: 1.0em; color: #8ea0d2; }
+#tagcloud .tagcloud_1 a { font-size: 1.2em; color: #7c91cb; }
+#tagcloud .tagcloud_2 a { font-size: 1.5em; color: #6981c3; }
+#tagcloud .tagcloud_3 a { font-size: 1.8em; color: #5772bc; }
+#tagcloud .tagcloud_4 a { font-size: 2.1em; color: #4764b3; }
+#tagcloud .tagcloud_5 a { font-size: 2.4em; color: #405aa0; }
+
+/* footer styles */
+#footer { padding-top: 5%; clear: both; text-align: center; }
+#footer ul { list-style: none; padding: 0; margin: 0; }
+#footer li { padding: 15px 0; font-size: 0.9em; color: #aaa; border-top: 1px solid; }
+#footer ul li.lastpage { float: left; border: none; }
+#footer ul li.nextpage { float: right; text-align: right; border: none; }
+#footer a { font-size: 0.9em; text-decoration: none; color: #777; }
+#footer a:hover { text-decoration: underline; color: #09c; }
+
+/* messages and debugging */
+h3.error { padding-top: 2%; font-size: 1.1em; color: #c00; }
+h3.message { padding-top: 2%; font-size: 0.9em; color: #060; }
+pre#dump { background-color: #fff; }
+

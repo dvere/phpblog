@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title><?=$title?></title>
+    <meta name="generator" content="Blogsum">
+    <link rel="stylesheet" type="text/css" href="/themes/<?=$theme?>/style.css">
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS 1.0">
+    <link rel="alternate" type="application/rss+xml" href="/rss2.xml" title="RSS 2.0">
+    <?php if ($google_webmaster_id): ?>
+	<meta name="verify-v1" content="<?=$google_webmaster_id?>">
+    <?php endif; ?>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+</head>
+<body>
+<div id="wrapper">
+    <div id="header">
+	<h1> <a href="/"><?=$title?></a><br> <span><?=$subtitle?></span> </h1>
+    </div>
+    <div id="main">
+    <?php foreach ($articles as $article): 
+	    extract($article); ?>
+	<div class="article">
+	    <h2><a href="/<?=$year?>/<?=$month?>/<?=$uri?>"><?=$title?></a></h2>
+	    <h3><?=$date?> <span>by <a href="/Tags/<?=$author?>"><?=$author?></a></span></h3>
+	    <div>
+		<?=$body?>
+		<?php if ($readmore): ?>
+		<p><a href="/<?=$year?>/<?=$month?>/<?=$uri?>">Read the rest of this story...</a> </p>
+		<?php endif; ?>
+	    </div>
+	    <ul>
+		<li class="comments_count">
+		    <span>Comments (<a href="/<?=$year?>/<?=$month?>/<?=$uri?>#comments"><?=$comments_count?></a>)</span>
+		</li>
+	    <?php if (!empty($tags)): ?>
+		<li class="tags">
+		    <span>Tags:
+		    <?php foreach ($tag_loop as $tag): ?>
+			&nbsp; <a href="/Tags/<?=$tag?>"> <?=$tag?></a>
+		    <?php endforeach; ?>
+		    </span>
+		</li>
+	    <?php endif; ?>
+	    </ul>
+	    <a name="comments"></a>
+	    <?php if (!empty($comments)): ?>
+	    <div class="comments">
+		<h4>Comments</h4>
+		<?php foreach ($comments as $comment):
+			extract($comment); ?>
+		    <h5>at <span><?=$date?></span>,
+		    <?php if ($url): ?>
+		    <a href="<?=$url?>">
+		    <?php endif; ?>
+		    <?=$name?>
+		    <?php if ($url): ?>
+		    </a>
+		    <?php endif; ?>
+		    wrote in to say...
+		    </h5>
+		    <p><?=$comment?></p>
+		<?php endforeach; ?>
+	    </div>
+	    <?php endif; ?>
+	</div>
+	<?php endforeach; ?>
+        <!-- end of articles -->
+        <!-- error and notification message handling -->
+        <?php if (!empty($error)): ?>
+	<h3 class="error">
+	    <img src="/themes/<?=$theme?>/images/asterisk-red.gif" style="height: 20px; padding-right: 5px;"> <?=$error?>
+	</h3>
+        <?php endif; ?>
+        <?php if (!empty($message)): ?>
+	<h3 class="message">
+	    <img src="/themes/<?=$theme?>/images/asterisk-green.gif" style="height: 20px; padding-right: 5px;"> <?=$message?>
+	</h3>
+        <?php endif; ?>
+
+        <!-- comment submission form -->
+        <?php if (isset($comment_form)): ?>
+	<div class="comment_form">
+	    <p>Add a comment:</p>
+	    <form action="" method="post">
+		<p><input name="name" size="40" maxlength="100" value="<?=$name?>"> &nbsp; name</p>
+		<p><input name="email" size="40" maxlength="100" value="<?=$email?>"> &nbsp; email</p>
+		<p><input name="url" size="40" maxlength="100" value="<?=$url?>"> &nbsp; url</p>
+		<p>max length <?=$comment_max_length?> chars<br>
+		<textarea rows="3" cols="30" name="comment"><?=$comment?></textarea>
+		</p>
+		<div class="g-recaptcha" data-size="compact" data-sitekey="<?=$conf['captcha_pubkey']?>"></div>
+		<p><input type="submit" name="submit" value="submit comment"></p>
+		<input type="hidden" name="id" value="<?=$id?>">
+	    </form>
+	</div>
+        <?php endif; ?>
+    </div> <!-- end of #main -->
+    <div id="sidebar">
+	<div id="archive">
+	    <h3>Archive</h3>
+	    <?php foreach ($archives as $yx): ?>
+	    <ul>
+		<li><a href="/<?=$yx['year']?>/"><?=$yx['year']?></a><span class="count"> (<?=$yx['count']?>)</span>
+		<?php if (!empty($yx['month_loop'])): ?>
+		    <ul>
+		    <?php foreach ($yx['month_loop'] as $mx): ?>
+			<li><a href="/<?=$mx['year']?>/<?=$mx['month']?>/"><?=$mx['month_name']?></a><span class="count"> <?=$mx['count']?></span>
+			<?php if (!empty($mx['uri_loop'])): ?>
+			    <ul>
+			    <?php foreach ($mx['uri_loop'] as $ux): ?>
+				<li><a title="<?=$ux['full_title']?>" href="/<?=$ux['year']?>/<?=$ux['month']?>/<?=$ux['uri']?>"><?=$ux['title']?></a></li>
+			    <?php endforeach; ?>
+			    </ul>
+			<?php endif; ?>
+			</li>
+		    <?php endforeach; ?>
+		    </ul>
+		<?php endif; ?>
+		</li>
+	    </ul>
+	<?php endforeach; ?>
+	</div>
+	<div id="tagcloud">
+	    <h3>Tag Cloud</h3>
+	    <ul>
+	    <?php foreach ($tagcloud as $tag => $scale): ?>
+		<li class="tagcloud_<?=$scale?>"><a href="/Tags/<?=$tag?>"><?=$tag?></a></li>
+	    <?php endforeach; ?>
+	    </ul>
+	</div>
+	<div id="feeds">
+	    <h3>Feeds</h3>
+	    <ul>
+		<li><a href="/rss.xml"><img src="/themes/<?=$theme?>/images/xml.gif" alt="RSS 1.0">RSS 1.0</a></li>
+		<li><a href="/rss2.xml"><img src="/themes/<?=$theme?>/images/xml.gif" alt="RSS 2.0">RSS 2.0</a></li>
+	    </ul>
+	</div>
+    </div> <!-- end of sidebar -->
+    <div id="footer">
+	<ul>
+	    <?php if (isset($page_prev)): ?><li class="lastpage"><a href="/Page/<?=$page_prev?>">Newer Articles</a></li><?php endif; ?>
+	    <?php if (isset($page_next)): ?><li class="nextpage"><a href="/Page/<?=$page_next?>">Older Articles</a></li><?php endif; ?>
+	    <li>&copy; <?=$copyright?></li>
+	</ul>
+    </div> <!-- end of footer -->
+</div> <!-- end of wrapper -->
+
+<?php if ($google_analytics_id): ?>
+<!-- analytics support -->
+<script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+    try {
+    var pageTracker = _gat._getTracker("<?=$google_analytics_id?>");
+    pageTracker._trackPageview();
+    } catch(err) {}
+</script>
+<?php endif; ?>
+
+</body>
+</html>
