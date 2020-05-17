@@ -1,6 +1,6 @@
 # phpblog
 
-Simple blogging app inspired by [blogsum] (https://github.com/obfuscurity/blogsum) reworked in php and intended for hosting on [OpenBSD httpd(8)](http://man.openbsd.org/httpd).
+Simple blogging app inspired by [blogsum](https://github.com/obfuscurity/blogsum) reworked in php and intended for hosting on [OpenBSD httpd(8)](http://man.openbsd.org/httpd).
 
 ## Prerequsites
 
