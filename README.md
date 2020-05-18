@@ -21,18 +21,23 @@ $ git clone git@github.com:dvere/phpblog.git
 $ cd phpblog && git checkout-index --prefix=~/blog/ -a  
 ```
 
-In the temporary directory create the database and run mtree to update ownership and permissions and remove setup files.  
+Change to the temporary directory and create the database.
 
 ```
 $ cd ~/blog && sqlite3 data/site.db < data/schema.sql 
 
+```
+
+Review and edit `conf/config.php` to suit. Then run mtree to update ownership and permissions and remove setup files.  
+
+```
 $ doas mtree -rUf conf/perms.mtree
 ```
 
 Copy the temporary directory into the web server chroot and grant an initial user access ensuring the password file is readable by the webserver.
 
 ```
-$ doas cp -rp ~/blog /var/www/htdocs/example.org
+$ doas cp -rp ~/blog /var/www/htdocs/
 
 $ doas htpasswd /var/www/blog.htpasswd admin
 Password:
@@ -45,14 +50,14 @@ $ doas chmod 640 /var/www/blog.htpasswd
 
 ## httpd(8) Configuration
 
-Example [httpd.conf(5)](http://man.openbsd.org/httpd.conf) server directives  
+Example [httpd.conf(5)](http://man.openbsd.org/httpd.conf) server directives. 
 
 ```
 server "example.org" {
     listen on * port 80
+    alias "www.example.org"
 
-    root "htdocs/example.org"
-
+    root "/htdocs/blog"
     log {
         access "example.org-access.log"
         error "example.org-error.log"
@@ -62,22 +67,20 @@ server "example.org" {
         root "/acme"
         request strip 2
     }
-    location '*' {
-        block return 301 "https://example.org$REQUEST_URI"
+    location "*" {
+        block return 301 "https://$SERVER_NAME$REQUEST_URI"
     }
 }
 
 server "example.org" {
     listen on * tls port 443
-
-    root "htdocs/example.org"
+    alias "www.example.org"
 
     tls certificate "/etc/ssl/acme/example.org/fullchain.pem"
     tls key "/etc/ssl/acme/private/example.org/privkey.pem"
 
-    directory index index.php
     connection max request body 2097152
-
+    root "/htdocs/blog"
     log {
         access "example.org-access.log"
         error "example.org-error.log"
@@ -87,46 +90,35 @@ server "example.org" {
         root "/acme"
         request strip 2
     }
-
-    location "/data*"           { block }
-    location "/conf*"           { block }
-    location "/src*"            { block }
-
-    location "/admin.php" {
-        authenticate with "/blog.htpasswd"
-        fastcgi socket "/run/php-fpm.sock"
-    }
-
+    location "/data*"	    { block }
+    location "/conf*"	    { block }
+    location "/src*"        { block }
     location "*.php" {
-        fastcgi socket "/run/php-fpm.sock"
+		fastcgi socket "/run/php-fpm.sock"
     }
-
+    location "/admin.php" {
+		authenticate with "/blog.htpasswd"
+    }
     location match '^/rss.xml$' {
-        block return 302 "/?rss=1"
+		request rewrite "/?rss=1"
     }
-
     location match '^/rss2.xml$' {
-        block return 302 "/?rss=2"
+		request rewrite "/?rss=2"
     }
-
     location match '^/Page/([^/]+)$' {
-        block return 302 "/?page=%1"
+		request rewrite "/?page=%1"
     }
-
     location match '^/Tags/([^/]+)$' {
-        block return 302 "/?search=%1"
+		request rewrite "/?search=%1"
     }
-
     location match '^/(%d%d%d%d)/(%d%d)/([^/]+)$' {
-        block return 302 "/?year=%1&month=%2&uri=%3"
+		request rewrite "/?year=%1&month=%2&uri=%3"
     }
-
     location match '^/(%d%d%d%d)/(%d%d)/?$' {
-        block return 302 "/?year=%1&month=%2"
+		request rewrite "/?year=%1&month=%2"
     }
-
     location match '^/(%d%d%d%d)/?$' {
-        block return 302 "/?year=%1"
+		request rewrite "/?year=%1"
     }
 }
 ```
