@@ -1,42 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-  <meta name="generator" content="phlogsum">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="generator" content="phpblog" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title><?=$conf['blog_title']?></title>
-  <link rel="stylesheet" type="text/css" href="/themes/<?=$conf['blog_theme']?>/style.css">
-  <link rel="stylesheet" type="text/css" href="/themes/common/w3.css">
-  <link rel="stylesheet" type="text/css" href="/themes/common/w3-theme-blue.css">
-  <style>html, body {font-family: Georgia, serif}
-         h1, h2, h3, h4, h5, h6 {font-family: Georgia, serif}
-         a {text-decoration:none}
-  </style>
-  <script src='https://www.google.com/recaptcha/api.js'></script>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
+  <link rel="stylesheet" type="text/css" href="/themes/<?=$conf['blog_theme']?>/style.css" />
 </head>
-<body style="margin:0px;">
+<body>
 
 <!-- masthead -->
 <header class="w3-row w3-top w3-theme w3-card-4">
   <div class="w3-col l1 w3-hide-small w3-hide-medium">&nbsp;</div>
   <div class="w3-col l9 w3-container">
     <a href="/"><?=$blog_title?></a>&nbsp;(<a href="/admin.php?view=<?=$view?>"><i><?=$view?></i></a>)<br />
-      <a href="?view=edit">create</a> / <a <?php if (!empty($comments)): ?>style="color: #f00;" <?php endif; ?>href="?view=moderate">moderate</a> / <a href="?view=administrate">administrate</a>
+    <a href="?view=edit">create</a> /
+    <?php if ($conf['comments_allowed']): ?>
+
+    <a <?php if (!empty($comments)): ?>style="color: #f00;" <?php endif; ?>href="?view=moderate">moderate</a> /
+    <?php endif; ?>
+
+    <a href="?view=administrate">administrate</a> / 
+    <a href="?view=manage">manage</a>
   </div>
 </header>
 <div class="w3-row" style="margin-top:65px">
   <div class="w3-col l1 w3-container w3-hide-small w3-hide-medium">&nbsp;</div>
   <?php if(isset($articles)): ?>
+
   <div class="w3-col m12 l10">
   <?php else: ?>
+
   <div class="w3-col m8 l6">
-  <?php endif; ?>
-    <?php if ($error): ?>
+  <?php endif;
+    if ($error): ?>
+
     <div class="w3-container w3-border w3-pale-red w3-margin-24">
       <h4><span class="w3-text-red">&#10045;</span> <?=$error?></h4>
     </div>
     <?php endif; 
     if (isset($preview)): ?>
+
     <!-- preview articles -->
     <div class="w3-container">
       <header class=" w3-border-bottom">
@@ -49,62 +55,82 @@
     </div>
     <?php endif; 
     if (isset($edit)): ?>
+
     <!-- create or edit articles -->
-    <form class="w3-form" action="/admin.php" method="post">
-      <label class="w3-label">Title</label>
-      <input class="w3-input w3-border" style="width:100%;max-width:400px;" name="title" value="<?=$title?>"><br />
-      <label class="w3-label">uri</label>
-      <input class="w3-input w3-border" style="width:100%;max-width:400px;" name="uri" value="<?=$uri?>"><br />
-      <label class="w3-label">tags (e.g. <em>foo,bar,baz</em>)</label>
-      <input class="w3-input w3-border" style="width:100%;max-width:400px;" name="tags" value="<?=$tags?>"><br />
-      <p><textarea spellcheck="true" class="w3-input w3-border" name="body" style="width:100%;height:300px"><?=$body?></textarea></p>
-      <input class="w3-small" type="submit" name="preview" value="preview"> &nbsp;&nbsp; <input class="w3-small" type="submit" name="save" value="save"><br />
-      <input type="hidden" name="view" value="edit">
-      <?php if (!empty($id)): ?>
-      <input type="hidden" name="id" value="<?=$id?>">
-      <?php endif; ?>
-    </form>
+    <div class="w3-container">
+      <form class="w3-form" action="/admin.php" method="post">
+        <label class="w3-label">Title</label>
+        <input class="w3-input w3-border" style="width:100%;max-width:400px;" name="title" value="<?=$title?>"><br />
+        <label class="w3-label">uri</label>
+        <input class="w3-input w3-border" style="width:100%;max-width:400px;" name="uri" value="<?=$uri?>"><br />
+        <label class="w3-label">tags (e.g. <em>foo,bar,baz</em>)</label>
+        <input class="w3-input w3-border" style="width:100%;max-width:400px;" name="tags" value="<?=$tags?>"><br />
+        <p><textarea spellcheck="true" class="w3-input w3-border" name="body" style="width:100%;height:300px"><?=$body?></textarea></p>
+        <input class="w3-small" type="submit" name="preview" value="preview"> &nbsp;&nbsp; <input class="w3-small" type="submit" name="save" value="save"><br />
+        <input type="hidden" name="view" value="edit">
+        <?php if (!empty($id)): ?>
+
+        <input type="hidden" name="id" value="<?=$id?>">
+        <?php endif; ?>
+
+      </form>
+    </div>
     <?php endif;
     if (isset($articles)): ?>
+
     <div class="w3-container">
       <!-- manage articles -->
       <?php foreach($articles as $article): ?>
+
       <div class="w3-padding-4 w3-border-bottom w3-row">
         <div class="w3-col l12">
           <?php if ( $article['enabled'] == 0): ?>
-          <a title="Publish" class="w3-large w3-text-green" style="text-decoration:none;vertical-align:text-middle" href="/admin.php?view=administrate&publish=<?=$article['id']?>">&#10004;</a>
+
+          <a title="Publish" class="w3-large w3-text-green" style="text-decoration:none;vertical-align:text-middle" href="/admin.php?view=administrate&id=<?=$article['id']?>&status=1">&#10004;</a>
           <?php else: ?>
-          <span class="w3-large w3-text-light-grey" style="text-decoration:none;vertical-align:text-middle">&#10004</span>
+
+          <span class="w3-large w3-text-light-grey" style="text-decoration:none;vertical-align:text-middle">&#10004;</span>
           <?php endif; ?>
+
           <a title="Edit" class="w3-large w3-text-indigo" style="text-decoration:none;vertical-align:text-middle" href="/admin.php?view=edit&id=<?=$article['id']?>">&#9998;</a>
           <?php if ( $article['enabled'] == 1 ): ?>
-          <a title="Draft" class="w3-large w3-text-orange" style="text-decoration:none;vertical-align:text-middle" href="/admin.php?view=administrate&draft=<?=$article['id']?>">&#9851;</a>
+
+          <a title="Draft" class="w3-large w3-text-orange" style="text-decoration:none;vertical-align:text-middle" href="/admin.php?view=administrate&id=<?=$article['id']?>&status=0">&#9851;</a>
           <?php else: ?>
+
           <span title="Draft" class="w3-large w3-text-light-grey" style="vertical-align:text-middle">&#9851;</span> 
           <?php endif; ?>
-          <a title="Delete" class="w3-large w3-text-red" style="text-decoration:none;vertical-align:text-middle" href="/admin.php?view=administrate&delete=<?=$article['id']?>">&#10008;</a>
+
+          <a title="Delete" class="w3-large w3-text-red" style="text-decoration:none;vertical-align:text-middle" href="/admin.php?view=administrate&id=<?=$article['id']?>&status=-1">&#10008;</a>
           <span>
           <?php if ( $article['enabled'] == 1 ): ?>
+
           <a class="w3-text-theme" href="/<?=$article['year']?>/<?=$article['month']?>/<?=$article['uri']?>" target="_new">
           <?php endif; ?> 
+
           <?=$article['title']?>&nbsp;
           <?php if ( $article['enabled'] == 1 ): ?>
+
           </a>
           <?php endif; ?>
+
           Submitted by <?=$article['author']?> on <?=$article['date']?></span>
         </div>
       </div>
       <?php endforeach; ?>
+
     </div>
     <?php endif; 
     if (isset($comments)): ?>
+
     <div class="w3-container">
       <!-- manage comments -->
       <?php foreach($comments as $comment): ?>
+
       <div class="w3-card-4">
         <div class="w3-container w3-border-bottom w3-light-grey">
-          <a title="Approve" class="w3-large w3-text-green" style="vertical-align:middle" href="/admin.php?view=moderate&publish=<?=$comment['id']?>">&#10004;</a>&nbsp;
-          <a title="Decline" class="w3-large w3-text-red" style="vertical-align:middle" href="/admin.php?view=moderate&delete=<?=$comment['id']?>">&#10008;</a>
+          <a title="Approve" class="w3-large w3-text-green" style="vertical-align:middle" href="/admin.php?view=moderate&id=<?=$comment['id']?>&status=1">&#10004;</a>&nbsp;
+          <a title="Decline" class="w3-large w3-text-red" style="vertical-align:middle" href="/admin.php?view=moderate&id=<?=$comment['id']?>&status=-1">&#10008;</a>
           &nbsp;comment in article &nbsp;
           <a class="w3-text-theme" href="<?=$comment['uri']?>" target="_new"><?=$comment['article_title']?></a><br />
           <span class="w3-small">Submitted by <?=$comment['name']?> at <?=$comment['date']?> </span>
@@ -114,21 +140,74 @@
         </div>
       </div>
       <?php endforeach; ?>
+
     </div>
+    <?php endif;
+
+  if (isset($files)): ?>
+
+    <div class="w3-container">  
+      <h3>Manage files</h3>
+        <form class="w3-form" enctype="multipart/form-data" action="admin.php" method="POST">
+          <input type="hidden" name="view" value="manage" />
+          <input type="hidden" name="MAX_FILE_SIZE" value="8388608" />
+          Upload file:<br />
+          <input name="userfile" type="file" />
+          <br />
+          <input type="submit" value="Upload" />
+        </form>
+      <?php if (!empty($files)): ?>
+
+      <div class="w3-responsive">
+        <table class="w3-table w3-small">
+          <tr class="w3-border-bottom w3-border-grey">
+            <th>&nbsp;</th>
+            <th>Filename</th>
+            <th>Size</th>
+            <th>Last modified</th>
+          </tr>
+          <?php foreach ($files as $file): ?>
+
+          <tr class="w3-border-bottom w3-border-grey">
+            <td class="w3-text-red"><a href="?view=manage&unlink=<?=$file['name']?>">&#10008;</a></td>
+            <td><span style="cursor:pointer" class="linky" title="View" onclick="document.getElementById('<?=$file['ino']?>').style.display='block'"><?=$file['name']?></span>
+                <div id="<?=$file['ino']?>" class="w3-modal board" onclick="this.style.display='none'">
+                  <span class="w3-closebtn w3-hover-red w3-container w3-padding-16 w3-display-topright">&times;</span>
+                  <div class="w3-modal-content w3-animate-zoom board">
+                    <center><img src="<?=$file['location']?>" style="display:block;max-width:600px"></center>
+                    <p class="w3-center"><?=$file['location']?></p>
+                  </div>
+                </div>
+            </td>
+            <td><?=$file['sz']?></td>
+            <td><?=$file['date']?></td>
+          </tr>
+          <?php endforeach; ?>
+
+        </table>
+      </div>
+      <?php endif; ?>
+
+    </div>
+    <?php endif; 
+    if (isset($articles)): ?>
+
+    <div class="w3-col l2 w3-container w3-hide-small w3-hide-medium">
+    <?php else: ?>
+
+    <div class="w3-col m3 l4 w3-container w3-hide-small">
     <?php endif; ?>
+
+      &nbsp;
+    </div>
   </div>
-  <?php if (isset($articles)): ?>
-  <div class="w3-col l2 w3-container w3-hide-small w3-hide-medium">
-  <?php else: ?>
-  <div class="w3-col m3 l4 w3-container w3-hide-small">
-  <?php endif; ?>
-    &nbsp;
-  </div>
-</div>
-<?php if (isset($dump)): ?>
-<div class="w3-code">
+  <?php if (isset($dump)): ?>
+
+  <div class="w3-code">
     <?=$dump?>
+  </div>
+  <?php endif; ?>
+
 </div>
-<?php endif; ?>
 </body>
 </html>

@@ -2,34 +2,25 @@
 
 function manage_articles()
 {
-  global $article_id, $articles, $comments, $dbh;
-  $status = 2;
+  global $articles, $comments, $dbh;
+  $status = $_REQUEST['status'] ?? 2;
+  $id = $_REQUEST['id'] ?? '';
+  $query = '';
   $params = [];
 
-  if (isset($_REQUEST['delete']) && is_numeric($_REQUEST['delete'])) {
-    $article_id = $_REQUEST['delete'];
-    $status = -1;
-  }
-  if (isset($_REQUEST['draft']) && is_numeric($_REQUEST['draft'])) {
-    $article_id = $_REQUEST['draft'];
-    $status = 0;
-  }
-  if (isset($_REQUEST['publish']) && is_numeric($_REQUEST['publish'])) {
-    $article_id = $_REQUEST['publish'];
-    $status = 1;
-  }
   if ($status < 2) {
     $query = "UPDATE articles SET enabled = :status";
     $params['status'] = $status;
-  }
-  if ($status == 1) {
-    $query .= ", date = datetime('now', 'localtime')";
-  }
-  if(!empty($article_id)) {
-    $query .= " WHERE id = :id";
-    $sth = $dbh->prepare($query);
-    $params['id'] = $article_id;
-    $sth->execute($params);
+
+    if ($status == 1) {
+      $query .= ", date = datetime('now', 'localtime')";
+    }
+    if(!empty($id)) {
+      $query .= " WHERE id = :id";
+      $sth = $dbh->prepare($query);
+      $params['id'] = $id;
+      $sth->execute($params);
+    }
   }
 
   $comments = get_comments();
@@ -39,18 +30,11 @@ function manage_articles()
 
 function manage_comments()
 {
-  global $dbh, $comment_id, $comments;
-  $status = 2;
+  global $dbh, $comments;
+  $status = $_REQUEST['status'] ?? 2;
+  $id = $_REQUEST['id'] ?? '';
 
-  if (isset($_REQUEST['delete']) && is_numeric($_REQUEST['delete'])) {
-    $params['id'] = $_REQUEST['delete'];
-    $params['status'] = -1;
-  }
-  if (isset($_REQUEST['publish']) && is_numeric($_REQUEST['publish'])) {
-    $params['id'] = $_REQUEST['publish'];
-    $params['status'] = 1;
-  }
-  if ($status < 2) {
+  if ($status < 2 && !empty($id)) {
     $stmt = "UPDATE comments SET enabled = :status WHERE id = :id";
     $sth = $dbh->prepare($stmt);
     $sth->execute($params);
@@ -87,7 +71,7 @@ function manage_files()
       $message = $uploaderr[0];
     }
     else {
-      $errx = $_FILES['userfile']['error']; 
+      $errx = $_FILES['userfile']['error'];
       $error = $uploaderr[$errx];
     }
   }
@@ -115,17 +99,15 @@ function get_files($dpath)
 function formatBytes($size, $precision = 2)
 {
   $base = log($size, 1024);
-  $suffixes = array('', 'K', 'M', 'G', 'T');   
+  $suffixes = array('', 'K', 'M', 'G', 'T');
 
   return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 }
 
 function edit_article()
 {
-  global $body,$comments, $conf, $dbh, $date, $edit, $error, $id,
-	$message, $preview, $title, $tags, $uri, $view;
-
-  $comments = get_comments();
+  global $body, $conf, $dbh, $date, $edit, $error, $id,
+  $message, $preview, $title, $tags, $uri, $view;
 
   # preview, pass through all input
   if (isset($_REQUEST['preview'])) {
@@ -141,15 +123,17 @@ function edit_article()
   # save edits, with id (update)
   elseif (!empty($_REQUEST['save']) && $_REQUEST['save'] == 'save' && !empty($_REQUEST['id'])) {
     if (!empty($_REQUEST['title']) && !empty($_REQUEST['uri']) && !empty($_REQUEST['body'])) {
-      $uri = str_replace(' ', '-', $_REQUEST['uri']);
-      $stmt = "UPDATE articles SET title = ?, uri = ?, body = ?, tags = ? WHERE id = ?";
+      $uri = mb_strtolower(str_replace(' ', '-', $_REQUEST['uri']));
+      $stmt = "UPDATE articles SET title = :title, uri = :uri, body = :body, tags = :tags WHERE id = :id";
       $sth = $dbh->prepare($stmt);
-      $params = [ $_REQUEST['title'],
-	      $uri,
-	      $_REQUEST['body'],
-	      $_REQUEST['tags'],
-	      $_REQUEST['id']];
-      
+      $params = [
+        'title' => $_REQUEST['title'],
+        'uri' => $uri,
+        'body' => $_REQUEST['body'],
+        'tags' => $_REQUEST['tags'],
+        'id' => $_REQUEST['id']
+      ];
+
       $sth->execute($params);
       manage_articles();
     }
@@ -169,18 +153,19 @@ function edit_article()
   elseif (isset($_REQUEST['save'])) {
     if (!empty($_REQUEST['body']) && !empty($_REQUEST['title'])) {
       $uri = $_REQUEST['uri'] ?: $_REQUEST['title'];
-      $uri = str_replace(' ', '-', $uri);
+      $uri = mb_strtolower(str_replace(' ', '-', $uri));
       $author = $_SERVER['REMOTE_USER'];
-      $stmt = " INSERT INTO articles VALUES
-	  (NULL, datetime('now', 'localtime'), ?, ?, ?, ?, 0, ?)";
+      $stmt = "INSERT INTO articles VALUES (NULL, datetime('now', 'localtime'), :title, :uri, :body, :tags, 0, :author)";
       $sth = $dbh->prepare($stmt);
-      $params = [ $_REQUEST['title'],
-	      $uri,
-	      $_REQUEST['body'],
-	      $_REQUEST['tags'],
-	      $author];
+      $params = [
+        'title' => $_REQUEST['title'],
+        'uri' => $uri,
+        'body' => $_REQUEST['body'],
+        'tags' => $_REQUEST['tags'],
+        'author' => $author
+      ];
 
-      $sth->execute();
+      $sth->execute($params);
       manage_articles();
 
     }
@@ -200,8 +185,7 @@ function edit_article()
   elseif (isset($_REQUEST['id'])) {
     $query = "SELECT * FROM articles WHERE id = ?";
     $sth = $dbh->prepare($query);
-    $sth->bindValue(1, $_REQUEST['id'], PDO::PARAM_INT);
-    $sth->execute();
+    $sth->execute([$_REQUEST['id']]);
     $result = $sth->fetch();
 
     if (!empty($result)) {
@@ -214,7 +198,6 @@ function edit_article()
       $date = substr($result['date'],0,10);
       $author = $result['author'];
       $edit = 1;
-
     }
     else {
       $error = 'no results found';
@@ -236,8 +219,7 @@ function get_articles()
   $articles = [];
 
   while ($row = $sth->fetch()) {
-    preg_match("/(\d{4})\-(\d{2})\-\d{2} \d{2}\:\d{2}\:\d{2}/",
-	$row['date'], $matches);
+    preg_match("/(\d{4})\-(\d{2})\-\d{2} \d{2}\:\d{2}\:\d{2}/", $row['date'], $matches);
     $row['year'] = $matches[1];
     $row['month'] = $matches[2];
     $row['date'] = substr($row['date'], 0, 10);
@@ -250,14 +232,16 @@ function get_articles()
 function get_comments()
 {
   global $conf, $dbh, $error;
+  if ($conf['comments_allowed'] != 1) {
+    return;
+  }
   $query = "SELECT a.title AS article_title, a.uri AS article_uri, a.date AS article_date, c.* FROM articles a, comments c WHERE a.id=c.article_id AND c.enabled=0 ORDER BY c.date DESC";
   $sth = $dbh->prepare($query);
   $sth->execute();
   $comments = [];
 
   while ($row = $sth->fetch()) {
-    preg_match( "/(\d{4})\-(\d{2})\-\d{2} \d{2}\:\d{2}\:\d{2}/",
-	$row['article_date'], $matches);
+    preg_match( "/(\d{4})\-(\d{2})\-\d{2} \d{2}\:\d{2}\:\d{2}/", $row['article_date'], $matches);
     $row['article_year'] = $matches[1];
     $row['article_month'] = $matches[2];
     $row['theme'] = $conf['blog_theme'];

@@ -14,7 +14,7 @@
             <a id="view" href="/admin.php?view=<?=$view?>"><?=$view?>.</a>
         </h1>
         <h3>
-            <a href="?view=edit">create</a> / <a <?php if ($comments_to_moderate): ?>style="color: #f00;"<?php endif; ?> href="?view=moderate">moderate</a> / <a href="?view=administrate">administrate</a>
+            <a href="?view=edit">create</a> / <a <?php if (!empty($comments)): ?>style="color: #f00;"<?php endif; ?> href="?view=moderate">moderate</a> / <a href="?view=administrate">administrate</a>
         </h3>
     </div>
 
